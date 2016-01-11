@@ -296,6 +296,8 @@ cpdefine("inline:com-chilipeppr-widget-nodemcusamples", ["chilipeppr_ready", /* 
                 this.options.showBody = true;
                 this.saveOptionsLocalStorage();
             }
+            $(window).trigger('resize');
+
         },
         /**
          * Hide the body of the panel.
@@ -314,6 +316,7 @@ cpdefine("inline:com-chilipeppr-widget-nodemcusamples", ["chilipeppr_ready", /* 
                 this.options.showBody = false;
                 this.saveOptionsLocalStorage();
             }
+            $(window).trigger('resize');
         },
         /**
          * This method loads the pubsubviewer widget which attaches to our 
