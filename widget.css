@@ -1,10 +1,61 @@
 /* CSS for ChiliPeppr Widget */
 
-#com-chilipeppr-widget-template {
+#com-chilipeppr-widget-nodemcusamples {
    
 }
 
-#com-chilipeppr-widget-template .nav-tabs>li>a {
+/*#com-chilipeppr-widget-nodemcusamples .nav-tabs {*/
+/*    padding:0;*/
+/*    margin:0;*/
+/*}*/
+#com-chilipeppr-widget-nodemcusamples .nav-tabs>li>a {
     padding: 2px 6px;
 }
+#com-chilipeppr-widget-nodemcusamples .panel-body {
+    /*padding:9px 8px;*/
+}
 
+.upper-right-buttons {
+    padding:0;
+    margin:0;
+    display: block;
+    position: relative;
+}
+.upper-right-btn-group {
+    position: absolute;
+    top: 0;
+    right: 0;
+    z-index: 10;
+    display: block;
+    padding:0;
+    /*padding: 5px 8px;*/
+    font-size: 12px;
+    color: #767676;
+    cursor: pointer;
+    /*background-color: initial;*/
+    /*border: 1px solid #e1e1e8;*/
+    border-radius: 0 4px 0 4px;
+}
+.bs-example {
+    margin-right: 0;
+    margin-left: 0;
+    background-color: #fff;
+    border-color: #ddd;
+    border-width: 1px;
+    border-radius: 4px 4px 0 0;
+    -webkit-box-shadow: none;
+    box-shadow: none;
+    position: relative;
+    padding: 45px 15px 15px;
+    /*margin: 0 -15px 15px;*/
+    border-style: solid;
+}
+.highlight {
+    margin-top: -16px;
+    margin-right: 0;
+    margin-left: 0;
+    border-width: 1px;
+    border-radius: 0;
+    border-bottom-right-radius: 4px;
+    border-bottom-left-radius: 4px;
+}
