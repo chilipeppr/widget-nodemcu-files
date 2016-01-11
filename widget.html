@@ -61,7 +61,7 @@
             <ul class="nav nav-tabs" role="tablist">
                 <!--<li class="active"><a href="#com-chilipeppr-widget-template-tab1" role="tab" data-toggle="tab">Tab 1</a></li>-->
                 <li class="active"><a href="#com-chilipeppr-widget-tab-node" role="tab" data-toggle="tab">Node</a></li>
-                <li><a href="#com-chilipeppr-widget-tab-os" role="tab" data-toggle="tab">OS</a></li>
+                <li class="hidden"><a href="#com-chilipeppr-widget-tab-os" role="tab" data-toggle="tab">OS</a></li>
                 <li><a href="#com-chilipeppr-widget-tab-file" role="tab" data-toggle="tab">File</a></li>
                 <li><a href="#com-chilipeppr-widget-tab-wifi" role="tab" data-toggle="tab">Wifi</a></li>
                 <li><a href="#com-chilipeppr-widget-tab-timer" role="tab" data-toggle="tab">Timer</a></li>
@@ -74,9 +74,10 @@
             <div class="tab-content">
                 <div class="tab-pane active" id="com-chilipeppr-widget-tab-node">
                     
-                    <p>Restart</p>
+                    
                     <div class="bs-example" data-example-id="inline-code"> 
-                    For example, <code>&lt;section&gt;</code> should be wrapped as inline. 
+                        <div class="bs-example-title">Restart</div>
+                        Restart the ESP8266 device. Also clears the buffer in SPJS.
                     </div>
                     <div class="upper-right-buttons">
                         <figure class="highlight">
@@ -88,17 +89,212 @@
                         </div>
                     </div>
                     
+                    <div class="bs-example" data-example-id="inline-code"> 
+                        <div class="bs-example-title">Info</div>
+                        Return NodeMCU version, chipid, flashid, flash size, flash mode, flash speed.
+                    </div>
+                    <div class="upper-right-buttons">
+                        <figure class="highlight">
+                            <pre><code class="language-javascript" 
+                            data-lang="javascript"
+                            >-- show info
+majorVer, minorVer, devVer, chipid, flashid, flashsize, flashmode, flashspeed = node.info();
+print("NodeMCU "..majorVer.."."..minorVer.."."..devVer)</code></pre>
+                        </figure>
+                        <div class="btn-group upper-right-btn-group" role="group">
+                            <button type="button" class="btn btn-sm btn-default xbtn-clipboard">Run</button>
+                            <button type="button" class="btn btn-sm btn-default xbtn-clipboard">Editor</button>
+                        </div>
+                    </div>
+                    
+                    <div class="bs-example" data-example-id="inline-code"> 
+                        
+                        <div class="bs-example-title">Deep Sleep</div>
+                        Enter deep sleep mode, wake up when timed out.
+                        <p><strong>Note:</strong> This function can only be used in the condition that esp8266 PIN32(RST) and PIN8(XPD_DCDC aka GPIO16) are connected together. Using sleep(0) will set no wake up timer, connect a GPIO to pin RST, the chip will wake up by a falling-edge on pin RST.<br>
+option=0, init data byte 108 is valuable;<br>
+option&gt;0, init data byte 108 is valueless.<br>
+More details as follows:<br>
+0, RF_CAL or not after deep-sleep wake up, depends on init data byte 108.<br>
+1, RF_CAL after deep-sleep wake up, there will belarge current.<br>
+2, no RF_CAL after deep-sleep wake up, there will only be small current.<br>
+4, disable RF after deep-sleep wake up, just like modem sleep, there will be the smallest current.</p>
+                    </div>
+                    <div class="upper-right-buttons">
+                        <figure class="highlight">
+                            <pre><code class="language-javascript" 
+                            data-lang="javascript"
+                            >--do nothing
+node.dsleep()
+--sleep μs
+node.dsleep(1000000)
+print("Woke from deep sleep")
+--set sleep option 4 RF off after wake, then sleep μs
+node.dsleep(1000000, 4)
+print("Woke from deep sleep with RF disabled after wake up")
+--set sleep option only
+node.dsleep(nil,4)</code></pre>
+                        </figure>
+                        <div class="btn-group upper-right-btn-group" role="group">
+                            <button type="button" class="btn btn-sm btn-default xbtn-clipboard">Run</button>
+                            <button type="button" class="btn btn-sm btn-default xbtn-clipboard">Editor</button>
+                        </div>
+                    </div>
+                    
                 </div>
 
                 <!-- Tab 2 -->
-                <div class="tab-pane" id="com-chilipeppr-widget-template-tab2">
-                    <p>This is the content of tab 2.</p>
+                <div class="tab-pane" id="com-chilipeppr-widget-tab-os">
+                    
+                    <div class="bs-example" data-example-id="inline-code"> 
+                        
+                        <div class="bs-example-title">Clock</div>
+                        
+                        Returns an approximation of the amount in seconds of 
+                        CPU time used by the program.
+                    </div>
+                    <div class="upper-right-buttons">
+                        <figure class="highlight">
+                            <pre><code class="language-javascript" 
+                            data-lang="javascript"
+                            >-- CPU time used by program
+os.clock()</code></pre>
+                        </figure>
+                        <div class="btn-group upper-right-btn-group" role="group">
+                            <button type="button" class="btn btn-sm btn-default xbtn-clipboard">Run</button>
+                            <button type="button" class="btn btn-sm btn-default xbtn-clipboard">Editor</button>
+                        </div>
+                    </div>
+                    
                 </div>
 
                 <!-- Tab 3 -->
-                <div class="tab-pane" id="com-chilipeppr-widget-template-tab3">
-                    <p>This is the content of tab 3.</p>
+                <div class="tab-pane" id="com-chilipeppr-widget-tab-file">
+                    
+                    <div class="bs-example" data-example-id="inline-code"> 
+                        
+                        <div class="bs-example-title">File Write</div>
+                        
+                        Open a file in append mode and write to it. Then
+                        close.
+                    </div>
+                    <div class="upper-right-buttons">
+                        <figure class="highlight">
+                            <pre><code class="language-javascript" 
+                            data-lang="javascript"
+                            >-- open 'init.lua' in 'a+' mode
+file.open("init.lua", "a+")
+-- write 'foo bar' to the end of the file
+file.write('foo bar')
+file.close()</code></pre>
+                        </figure>
+                        <div class="btn-group upper-right-btn-group" role="group">
+                            <button type="button" class="btn btn-sm btn-default xbtn-clipboard">Run</button>
+                            <button type="button" class="btn btn-sm btn-default xbtn-clipboard">Editor</button>
+                        </div>
+                    </div>
+                    
+                    <!-- Code Example -->
+                    <div class="bs-example" data-example-id="inline-code"> 
+                        
+                        <div class="bs-example-title">File Open</div>
+                        
+                        If nothing is passed in, read all bytes in file. 
+                        If passing a number in, then read n bytes from 
+                        file, or until EOF is reached. If passing in a 
+                        string like "q", then read until 'q' or EOF is reached.
+                    </div>
+                    <div class="upper-right-buttons">
+                        <figure class="highlight">
+                            <pre><code class="language-javascript" 
+                            data-lang="javascript"
+                            > -- print the first line of 'init.lua'
+file.open("init.lua", "r")
+print(file.read('\r'))
+file.close()
+
+-- print the first 5 byte of 'init.lua'
+file.open("init.lua", "r")
+print(file.read(5))
+file.close()</code></pre>
+                        </figure>
+                        <div class="btn-group upper-right-btn-group" role="group">
+                            <button type="button" class="btn btn-sm btn-default xbtn-clipboard">Run</button>
+                            <button type="button" class="btn btn-sm btn-default xbtn-clipboard">Editor</button>
+                        </div>
+                    </div>
+                    
                 </div>
+                
+                <!-- Tab Wifi -->
+                <div class="tab-pane" id="com-chilipeppr-widget-tab-wifi">
+                    
+                    <!-- Code Example -->
+                    <div class="bs-example" data-example-id="inline-code"> 
+                        
+                        <div class="bs-example-title">Get Config</div>
+                        
+                        Get wifi station configuration.
+Note: If bssid_set is equal to 0 then bssid is irrelevant
+                    </div>
+                    <div class="upper-right-buttons">
+                        <figure class="highlight">
+                            <pre><code class="language-javascript" 
+                            data-lang="javascript"
+                            >--Get current Station config
+ssid, password, bssid_set, bssid=wifi.sta.getconfig()
+print("\nCurrent Station configuration:\nSSID : "..ssid
+.."\nPassword  : "..password
+.."\nBSSID_set  : "..bssid_set
+.."\nBSSID: "..bssid.."\n")
+ssid, password, bssid_set, bssid=nil, nil, nil, nil</code></pre>
+                        </figure>
+                        <div class="btn-group upper-right-btn-group" role="group">
+                            <button type="button" class="btn btn-sm btn-default xbtn-clipboard">Run</button>
+                            <button type="button" class="btn btn-sm btn-default xbtn-clipboard">Editor</button>
+                        </div>
+                    </div>
+                    
+                    
+                    <!-- Code Example -->
+                    <div class="bs-example" data-example-id="inline-code"> 
+                        
+                        <div class="bs-example-title">Get Access Points</div>
+                        
+                       Scan and get the access point list as a lua table 
+                       into callback function. When calling getap() a 1 is 
+                       passed in which means 1: New format (BSSID : SSID, RSSI, Authmode, Channel)
+                    </div>
+                    <div class="upper-right-buttons">
+                        <figure class="highlight">
+                            <pre><code class="language-javascript" 
+                            data-lang="javascript"
+                            >-- Print AP list
+function listap(t) -- (SSID : Authmode, RSSI, BSSID, Channel)
+ print("\n\t\t\tSSID\t\t\t\t\tBSSID\t\t\t  RSSI\t\tAUTHMODE\t\tCHANNEL")
+  for bssid,v in pairs(t) do
+   local ssid, rssi, authmode, channel = string.match(v, "([^,]+),([^,]+),([^,]+),([^,]*)")
+    print(string.format("%32.s",ssid).."\t"..bssid.."\t  "..rssi.."\t\t"..authmode.."\t\t\t"..channel)
+  end
+end
+wifi.sta.getap(1, listap)</code></pre>
+                        </figure>
+                        <div class="btn-group upper-right-btn-group" role="group">
+                            <button type="button" class="btn btn-sm btn-default xbtn-clipboard">Run</button>
+                            <button type="button" class="btn btn-sm btn-default xbtn-clipboard">Editor</button>
+                        </div>
+                    </div>
+                    
+                </div>
+
+                <!-- Tab Timer -->
+                <div class="tab-pane" id="com-chilipeppr-widget-tab-timer">
+                </div>
+
+                <!-- Tab GPIO -->
+                <div class="tab-pane" id="com-chilipeppr-widget-tab-gpio">
+                </div>
+
 
             </div>
 

@@ -140,7 +140,7 @@ or elements, that this widget/element subscribes to.</td></tr><tr valign="top"><
 instantiating code like a workspace or a different widget.</td></tr><tr valign="top"><td>btnSetup</td><td>function</td><td>function () <br><br>Call this method from init to setup all the buttons when this widget
 is first loaded. This basically attaches click events to your 
 buttons. It also turns on all the bootstrap popovers by scanning
-the entire DOM of the widget.</td></tr><tr valign="top"><td>onHelloBtnClick</td><td>function</td><td>function (evt) <br><br>onHelloBtnClick is an example of a button click event callback</td></tr><tr valign="top"><td>options</td><td>object</td><td>User options are available in this property for reference by your
+the entire DOM of the widget.</td></tr><tr valign="top"><td>initTabs</td><td>function</td><td>function () </td></tr><tr valign="top"><td>onHelloBtnClick</td><td>function</td><td>function (evt) <br><br>onHelloBtnClick is an example of a button click event callback</td></tr><tr valign="top"><td>options</td><td>object</td><td>User options are available in this property for reference by your
 methods. If any change is made on these options, please call
 saveOptionsLocalStorage()</td></tr><tr valign="top"><td>setupUiFromLocalStorage</td><td>function</td><td>function () <br><br>Call this method on init to setup the UI by reading the user's
 stored settings from localStorage and then adjust the UI to reflect

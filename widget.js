@@ -136,6 +136,7 @@ cpdefine("inline:com-chilipeppr-widget-nodemcusamples", ["chilipeppr_ready", /* 
 
             this.setupUiFromLocalStorage();
             this.btnSetup();
+            //this.initTabs();
             this.forkSetup();
 
             console.log("I am done being initted.");
@@ -195,6 +196,13 @@ cpdefine("inline:com-chilipeppr-widget-nodemcusamples", ["chilipeppr_ready", /* 
             // when the callback is called
             $('#' + this.id + ' .btn-helloworld2').click(this.onHelloBtnClick.bind(this));
 
+        },
+        initTabs: function() {
+            $('#' + this.id + ' .nav-tabs a').click(function (e) {
+                console.log("showing tab");
+                e.preventDefault();
+                $(this).tab('show');
+            });
         },
         /**
          * onHelloBtnClick is an example of a button click event callback
