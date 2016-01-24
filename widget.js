@@ -34,7 +34,7 @@ requirejs.config({
     }
 });
 
-cprequire_test(["inline:com-chilipeppr-widget-nodemcusamples"], function(myWidget) {
+cprequire_test(["inline:com-chilipeppr-widget-nodemcu-files"], function(myWidget) {
 
     // Test this element. This code is auto-removed by the chilipeppr.load()
     // when using this widget in production. So use the cpquire_test to do things
@@ -66,6 +66,40 @@ cprequire_test(["inline:com-chilipeppr-widget-nodemcusamples"], function(myWidge
         }
     );
 
+    var loadSpjsWidget = function(callback) {
+
+        var that = this;
+        $('body').append($('<div id="spjsWidget"></div>'));
+        chilipeppr.load(
+            "#spjsWidget",
+            "http://fiddle.jshell.net/chilipeppr/vetj5fvx/show/light/",
+            function() {
+                console.log("mycallback got called after loading spjs module");
+                cprequire(["inline:com-chilipeppr-widget-serialport"], function(spjs) {
+                    //console.log("inside require of " + fm.id);
+                    spjs.setSingleSelectMode();
+                    //spjs.init(null, "timed", 9600);
+                    spjs.init({
+                        isSingleSelectMode: true,
+                        defaultBuffer: "nodemcu",
+                        defaultBaud: 9600,
+                        bufferEncouragementMsg: 'For your NodeMCU device please choose the "nodemcu" buffer in the pulldown and a 9600 baud rate before connecting.'
+                    });
+                    //spjs.showBody();
+                    //spjs.consoleToggle();
+
+                    that.widgetSpjs = spjs;
+
+                    callback();
+
+                });
+            }
+        );
+    };
+    
+    // load spjs widget so we can test our interactive file listing
+    loadSpjsWidget();
+        
     // init my widget
     myWidget.init();
     $('#' + myWidget.id).css('margin', '10px');
@@ -74,14 +108,14 @@ cprequire_test(["inline:com-chilipeppr-widget-nodemcusamples"], function(myWidge
 } /*end_test*/ );
 
 // This is the main definition of your widget. Give it a unique name.
-cpdefine("inline:com-chilipeppr-widget-nodemcusamples", ["chilipeppr_ready", /* other dependencies here */ ], function() {
+cpdefine("inline:com-chilipeppr-widget-nodemcu-files", ["chilipeppr_ready", /* other dependencies here */ ], function() {
     return {
         /**
          * The ID of the widget. You must define this and make it unique.
          */
-        id: "com-chilipeppr-widget-nodemcusamples", // Make the id the same as the cpdefine id
-        name: "Widget / NodeMCU Samples", // The descriptive name of your widget.
-        desc: "Load sample code for the NodeMCU Lua programming language.", // A description of what your widget does
+        id: "com-chilipeppr-widget-nodemcu-files", // Make the id the same as the cpdefine id
+        name: "Widget / NodeMCU Files", // The descriptive name of your widget.
+        desc: "List the files on the NodeMCU flash memory. Manage them by opening them for editing, deleting, running, compiling, etc.", // A description of what your widget does
         url: "(auto fill by runme.js)",       // The final URL of the working widget as a single HTML file with CSS and Javascript inlined. You can let runme.js auto fill this if you are using Cloud9.
         fiddleurl: "(auto fill by runme.js)", // The edit URL. This can be auto-filled by runme.js in Cloud9 if you'd like, or just define it on your own to help people know where they can edit/fork your widget
         githuburl: "(auto fill by runme.js)", // The backing github repo
