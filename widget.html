@@ -37,7 +37,7 @@
 
             <div class="btn-toolbar pull-right" role="toolbar">
                 <div class="btn-group">
-                    <button type="button" class="btn btn-xs btn-default btn-sayhello" data-delay="1000" data-animation="true" 
+                    <button type="button" class="btn btn-xs btn-default btn-refresh" data-delay="1000" data-animation="true" 
                     data-placement="auto" data-container="body" data-trigger="hover" 
                     data-title="Refresh File List" 
                     data-content="Send commands to the NodeMCU to read the file list. Make sure your NodeMCU device is connected and able to execute code."
@@ -55,7 +55,7 @@
                         <ul class="dropdown-menu dropdown-menu-right" role="menu"></ul>
                     </div>
                 </div>
-            </div> <span class="panel-title" data-toggle="popover">Files</span> <span style="font-size:9px;" class="hidden fb-build">v1</span>
+            </div> <span class="panel-title" data-toggle="popover">NodeMCU Files</span> <span style="font-size:9px;" class="hidden fb-build">v1</span>
 
         </div>
         <div class="panel-body">
@@ -70,11 +70,14 @@
             <div class="tab-content">
                 <div class="tab-pane active" id="com-chilipeppr-widget-nodemcu-files-tab-device">
                     
-                    <table class="table">
-                        <tr>
-                            <td>initasdfas.lua</td>
-                            <td>1KB</td>
-                            <td>
+                    <table class="table filelist-table">
+                        <tr><th>File</th><th>Size</th><th>Actions</th></tr>
+                        <tr class="filelist-start"><td colspan="3">Please click Refresh to show your file list.</td></tr>
+                        <tr class="filelist-empty hidden"><td colspan="3">There are no files on your NodeMCU device.</td></tr>
+                        <tr class="hidden filelist-template">
+                            <td class="filelist-name">initasdfas.lua</td>
+                            <td class="filelist-size">1KB</td>
+                            <td class="filelist-actions">
                                 <div class="btn-group btn-group-xs btn-group-filecmds">
                                 <button class="btn btn-default btn-fileedit" type="button"
                                     data-container="body" data-toggle="popover" 
@@ -89,6 +92,13 @@
                                     data-content="Execute the file via a dofile() command." 
                                     data-delay="1000">
                                     <span class="glyphicon glyphicon-play"></span>
+                                </button>
+                                <button class="btn btn-default btn-filecompile" type="button"
+                                    data-container="body" data-toggle="popover" 
+                                    data-placement="auto" data-trigger="hover"
+                                    data-content="Compile the file using the docompile() command." 
+                                    data-delay="1000">
+                                    <span class="glyphicon glyphicon-random"></span>
                                 </button>
                                 <button class="btn btn-default btn-filedump" type="button"
                                     data-container="body" data-toggle="popover" 

@@ -13,10 +13,16 @@
     padding: 2px 6px;
 }
 #com-chilipeppr-widget-nodemcu-files .panel-body {
-    /*padding:9px 8px;*/
-    
+    padding:0;
 }
 
 #com-chilipeppr-widget-nodemcu-files .btn-group-filecmds {
     
+}
+
+#com-chilipeppr-widget-nodemcu-files .filelist-table {
+    margin-bottom:0;
+}
+#com-chilipeppr-widget-nodemcu-files .filelist-actions {
+    padding-right:0;
 }

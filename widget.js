@@ -86,11 +86,11 @@ cprequire_test(["inline:com-chilipeppr-widget-nodemcu-files"], function(myWidget
                         bufferEncouragementMsg: 'For your NodeMCU device please choose the "nodemcu" buffer in the pulldown and a 9600 baud rate before connecting.'
                     });
                     //spjs.showBody();
-                    //spjs.consoleToggle();
+                    spjs.consoleToggle();
 
                     that.widgetSpjs = spjs;
 
-                    callback();
+                    if (callback) callback();
 
                 });
             }
@@ -168,6 +168,7 @@ cpdefine("inline:com-chilipeppr-widget-nodemcu-files", ["chilipeppr_ready", /* o
         init: function() {
             console.log("I am being initted. Thanks.");
 
+            this.setupSubscribe();
             this.setupUiFromLocalStorage();
             this.btnSetup();
             //this.initTabs();
@@ -175,6 +176,202 @@ cpdefine("inline:com-chilipeppr-widget-nodemcu-files", ["chilipeppr_ready", /* o
 
             console.log("I am done being initted.");
         },
+        /**
+         * Send file list commands
+         */
+        getFileList: function() {
+            var code = `l = file.list()
+str = ""
+if next(l) == nil then
+  str = "{\\"files\\":null}"
+else
+  str = "{\\"files\\":["
+  for k,v in pairs(l) do
+    str = str .. "{\\"name\\":\\"" .. k .. "\\", \\"size\\":" .. v .. "}, "
+  end
+  str = string.sub(str, 0, string.len(str) - 2)
+  str = str .. "]}"
+end
+print(str)
+str = nil
+l = nil`;
+            this.send(code);
+        },
+        /**
+         * We have to subscribe to the serial port events so we can parse them
+         * to know what files are on the device.
+         */
+        setupSubscribe: function() {
+            chilipeppr.subscribe("/com-chilipeppr-widget-serialport/recvline", this, this.onRecv);
+        },
+        /**
+         * Keep a counter so each send has its own ID so we can use jsonSend
+         * and get complete statuses back from SPJS when we send each line
+         * to the serial port.
+         */
+        sendCtr: 0,
+        /**
+         * Send the script off to the serial port.
+         */
+        send: function(txt) {
+            var cmds = txt.split(/\n/g);
+            var ctr = 0;
+            var that = this;
+
+            for (var indx in cmds) {
+                //setTimeout(function() {
+
+                var cmd = cmds[ctr];
+
+                chilipeppr.publish("/com-chilipeppr-widget-serialport/jsonSend", {
+                    D: cmd + '\n',
+                    Id: "filemgr-" + that.sendCtr++
+                });
+
+                ctr++;
+
+                //}, 10 * indx);
+            }
+        },
+        /**
+         * Watch to receive messages back from serial port.
+         */
+        onRecv: function(data) {
+            console.log("NodeMCU files -> onRecv. data:", data);
+            
+            if (data && 'dataline' in data && data.dataline.match(/^{/)) {
+                // we at least know it is not null and is json we are after
+                var cmd = data.dataline;
+                console.log("NodeMCU file list. cmd:", cmd);
+                
+                if (cmd.match(/{"files":null}/)) {
+                    // we got back an empty list of files
+                    console.log("got back empty file list")
+                    $('#' + this.id + ' .filelist-start').addClass("hidden");
+                    $('#' + this.id + ' .filelist-empty').removeClass("hidden");
+                } else if (cmd.match(/^{"files"\:\[{/)) {
+                    // we have a file list. parse and show it.
+                    var list = JSON.parse(cmd);
+                    list = list.files;
+                    console.log("we have a populated filelist. list:", list);
+                    
+                    
+                    $('#' + this.id + ' .filelist-start').addClass("hidden");
+                    $('#' + this.id + ' .filelist-empty').addClass("hidden");
+                    
+                    // get template
+                    var tEl = $('#' + this.id + ' .filelist-template');
+                    var tableEl = $('#' + this.id + ' .filelist-table');
+                    
+                    // remove previous file list rows
+                    tableEl.find(".filelist-dynamic").remove();
+                    
+                    var that = this;
+                    
+                    for (var i in list) {
+                        var file = list[i];
+                        
+                        var rowEl = tEl.clone();
+                        rowEl.removeClass("hidden");
+                        rowEl.removeClass("filelist-template");
+                        rowEl.addClass("filelist-dynamic");
+                        rowEl.find(".filelist-name").text(file.name);
+                        rowEl.find(".filelist-size").text(file.size + "B");
+                        
+                        // see if .lc file
+                        if (file.name.match(/\.lc$/)) {
+                            // it is .lc so do some special stuff
+                            rowEl.find(".btn-fileedit").remove();
+                            rowEl.find(".btn-filecompile").remove();
+                            rowEl.find(".btn-filedump").remove();
+                        } else {
+                            rowEl.find(".btn-filedump").click(file, this.fileDump.bind(this));
+                            rowEl.find(".btn-filecompile").click(file, this.fileCompile.bind(this));
+                            
+                        }
+
+                        rowEl.find(".btn-filerun").click(file, this.fileRun.bind(this));
+                        rowEl.find(".btn-filedelete").click(file, this.fileDelete.bind(this));
+                        
+                        tableEl.append(rowEl);
+                    }
+                }
+            }
+        },
+        /**
+         * Send Lua command to dump out contents of file.
+         */
+        fileDump: function(evt) {
+            
+            console.log("fileDump. evt:", evt);
+            
+            if (evt) $(evt.currentTarget).popover('hide');
+            
+            var filename = null;
+            
+            if ('data' in evt) {
+                filename = evt.data.name;
+            } 
+            
+            this.send('file.open("' + filename + '", "r")');
+            this.send('fileline = file.readline()');
+            this.send('while fileline do');
+            this.send('  print(string.sub(fileline, 0, string.len(fileline) - 1))');
+            this.send('  fileline = file.readline()');
+            this.send('end');
+            this.send('file.close()');
+            this.send('fileline = nil');
+
+            // create a file read script as temp file. save that file.
+            // then run it. that way the dump is after everything so
+            // folks can cut/paste cleanly
+            /*
+            var tmpFile = "" +
+            'file.open("' + filename + '", "r")\n' +
+            'print(file.read())\n' +
+            'file.close()\n'
+            '';
+            this.rawUploadAndRun(tmpFile, "tmp");
+            */
+            
+
+        },
+        /**
+         * Send Lua command to compile file to .lc file.
+         */
+        fileCompile: function(evt) {
+            
+            console.log("fileCompile. evt:", evt);
+            
+            if (evt) $(evt.currentTarget).popover('hide');
+            
+            var filename = evt.data.name;
+            
+            this.send('node.compile("' + filename + '")');
+            this.getFileList();
+        },
+        /**
+         * Send Lua commands to delete a file.
+         */
+        fileDelete: function(evt) {
+            console.log("fileDel. evt:", evt);
+            if (evt) $(evt.currentTarget).popover('hide');
+            var filename = evt.data.name;
+            this.send('file.remove("' + filename + '")');
+            this.getFileList();
+
+        },
+        /**
+         * Send Lua command to run file.
+         */
+        fileRun: function(evt) {
+            
+            if (evt && 'currentTarget' in evt) $(evt.currentTarget).popover('hide');
+            var filename = evt.data.name;
+            this.send('dofile("' + filename + '")');
+
+        },
+
         /**
          * Call this method from init to setup all the buttons when this widget
          * is first loaded. This basically attaches click events to your 
@@ -212,23 +409,21 @@ cpdefine("inline:com-chilipeppr-widget-nodemcu-files", ["chilipeppr_ready", /* o
             // as opposed to a full callback method in the Hello Word 2
             // example further below. Notice we have to use "that" so 
             // that the this is set correctly inside the anonymous method
-            $('#' + this.id + ' .btn-sayhello').click(function() {
-                console.log("saying hello");
+            $('#' + this.id + ' .btn-refresh').click(function() {
+                console.log("doing refresh");
                 // Make sure popover is immediately hidden
-                $('#' + that.id + ' .btn-sayhello').popover("hide");
+                $('#' + that.id + ' .btn-refresh').popover("hide");
                 // Show a flash msg
                 chilipeppr.publish(
                     "/com-chilipeppr-elem-flashmsg/flashmsg",
-                    "Hello Title",
-                    "Hello World from widget " + that.id,
+                    "Getting File List",
+                    "Sending code to the NodeMCU device to list out files so we can refresh our index. If your device is not responsive, this will fail. Restart your device and try again. " + that.id,
                     1000
                 );
+                
+                that.getFileList();
             });
 
-            // Init Hello World 2 button on Tab 1. Notice the use
-            // of the slick .bind(this) technique to correctly set "this"
-            // when the callback is called
-            $('#' + this.id + ' .btn-helloworld2').click(this.onHelloBtnClick.bind(this));
 
         },
         initTabs: function() {
