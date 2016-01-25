@@ -287,6 +287,7 @@ l = nil`;
         onRecv: function(data) {
             console.log("NodeMCU files -> onRecv. data:", data);
             
+            // this code handles a file list json string
             if (data && 'dataline' in data && data.dataline.match(/^{/)) {
                 // we at least know it is not null and is json we are after
                 var cmd = data.dataline;
@@ -335,7 +336,7 @@ l = nil`;
                         } else {
                             rowEl.find(".btn-filedump").click(file, this.fileDump.bind(this));
                             rowEl.find(".btn-filecompile").click(file, this.fileCompile.bind(this));
-                            
+                            rowEl.find(".btn-fileedit").click(file, this.fileEdit.bind(this));
                         }
 
                         rowEl.find(".btn-filerun").click(file, this.fileRun.bind(this));
@@ -345,6 +346,63 @@ l = nil`;
                     }
                 }
             }
+            
+            // This code handles if we get ### START FILE DUMP ###
+            else if (data && 'dataline' in data && this.isFileCaptureOn) {
+                
+                var line = data.dataline;
+                console.log("file capture is on. line:", line);
+                
+                if (line.match(/^### END FILE DUMP ###/)) {
+                    console.log("ending capture and doing callback.");
+                    this.isFileCaptureInProgress = false;
+                    this.isFileCaptureOn = false;
+                    this.onFileEditCaptureDone(this.fileCaptureContent);
+                    this.fileCaptureContent = null;
+                }
+                else if (this.isFileCaptureInProgress) {
+                    console.log("file capture progress. appending line.");
+                    this.fileCaptureContent += line;
+                }
+                else if (line.match(/^### START FILE DUMP ###/)) {
+                    // starting capture
+                    console.log("starting capture.");
+                    this.isFileCaptureInProgress = true;
+                    this.fileCaptureContent = "";
+                } 
+                
+            }
+        },
+        /**
+         * Publish a signal to the Lua Editor to open this file in a tab for editing.
+         */
+        isFileCaptureOn: false,
+        fileEdit: function(evt) {
+            
+            if (evt && 'currentTarget' in evt) $(evt.currentTarget).popover('hide');
+            var filename = evt.data.name;
+            
+            this.isFileCaptureOn = true;
+
+            var code = `file.open("` + filename + `", "r")
+function dumpFile()
+    local fileline = file.readline()
+    print("### START FILE DUMP ###")
+    while fileline do
+      print(string.sub(fileline, 0, string.len(fileline) - 1))
+      fileline = file.readline()
+    end
+    print("### END FILE DUMP ###")
+end
+dumpFile()
+file.close()`;
+            this.send(code);
+        },
+        /**
+         * We get this callback from onRecv when it sees the ### END FILE DUMP ### string
+         */
+        onFileEditCaptureDone: function(content) {
+            console.log("onFileEditCaptureDone. content:", content);
         },
         /**
          * Send Lua command to dump out contents of file.
