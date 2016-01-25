@@ -48,6 +48,12 @@
 #com-chilipeppr-widget-nodemcu-files .filelist-table th, #com-chilipeppr-widget-nodemcu-files .filelist-table td {
     padding:2px 6px;
 }
+#com-chilipeppr-widget-nodemcu-files .panel-body .filelist-table .filelist-padleft {
+    padding-left:14px;
+}
+#com-chilipeppr-widget-nodemcu-files .panel-body .filelist-table .filelist-padright {
+    padding-right:14px;
+}
     </style>
 
     <script type='text/javascript'>
@@ -323,6 +329,8 @@ l = nil`;
                     
                     var that = this;
                     
+                    var totalSize = 0;
+                    
                     for (var i in list) {
                         var file = list[i];
                         
@@ -356,7 +364,18 @@ l = nil`;
                         });
                         
                         tableEl.append(rowEl);
+                        
+                        totalSize += file.size;
                     }
+                    
+                    var rowEl = tEl.clone();
+                    rowEl.removeClass("hidden");
+                    rowEl.removeClass("filelist-template");
+                    rowEl.addClass("filelist-dynamic");
+                    rowEl.find(".filelist-name").html("<b>Total</b>");
+                    rowEl.find(".filelist-size").text(parseInt(totalSize / 1024) + "KB");
+                    rowEl.find(".filelist-actions").html("");
+                    tableEl.append(rowEl);
                     
                     setTimeout(function() {$(window).trigger('resize');}, 500);
 
@@ -760,14 +779,14 @@ file.close()`;
                 <div class="tab-pane active" id="com-chilipeppr-widget-nodemcu-files-tab-device">
                     
                     <table class="table filelist-table">
-                        <tr><th>File</th><th>Size</th><th>Actions</th></tr>
-                        <tr class="filelist-start"><td colspan="3">Please click Refresh to show your file list.</td></tr>
-                        <tr class="filelist-empty hidden"><td colspan="3">There are no files on your NodeMCU device.</td></tr>
+                        <tr><th class="filelist-padleft">File</th><th>Size</th><th class="filelist-padright xpull-right">Actions</th></tr>
+                        <tr class="filelist-start"><td colspan="3" class="filelist-padleft">Please click Refresh to show your file list.</td></tr>
+                        <tr class="filelist-empty hidden"><td colspan="3" class="filelist-padleft">There are no files on your NodeMCU device.</td></tr>
                         <tr class="hidden filelist-template">
-                            <td class="filelist-name">initasdfas.lua</td>
+                            <td class="filelist-name filelist-padleft">initasdfas.lua</td>
                             <td class="filelist-size">1KB</td>
-                            <td class="filelist-actions">
-                                <div class="btn-group btn-group-xs btn-group-filecmds">
+                            <td class="filelist-actions filelist-padright">
+                                <div class="btn-group btn-group-xs btn-group-filecmds xpull-right">
                                 <button class="btn btn-default btn-fileedit" type="button"
                                     data-container="body" data-toggle="popover" 
                                     data-placement="auto" data-trigger="hover"

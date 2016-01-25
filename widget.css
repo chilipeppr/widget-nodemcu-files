@@ -32,3 +32,9 @@
 #com-chilipeppr-widget-nodemcu-files .filelist-table th, #com-chilipeppr-widget-nodemcu-files .filelist-table td {
     padding:2px 6px;
 }
+#com-chilipeppr-widget-nodemcu-files .panel-body .filelist-table .filelist-padleft {
+    padding-left:14px;
+}
+#com-chilipeppr-widget-nodemcu-files .panel-body .filelist-table .filelist-padright {
+    padding-right:14px;
+}

@@ -269,6 +269,8 @@ l = nil`;
                     
                     var that = this;
                     
+                    var totalSize = 0;
+                    
                     for (var i in list) {
                         var file = list[i];
                         
@@ -302,7 +304,18 @@ l = nil`;
                         });
                         
                         tableEl.append(rowEl);
+                        
+                        totalSize += file.size;
                     }
+                    
+                    var rowEl = tEl.clone();
+                    rowEl.removeClass("hidden");
+                    rowEl.removeClass("filelist-template");
+                    rowEl.addClass("filelist-dynamic");
+                    rowEl.find(".filelist-name").html("<b>Total</b>");
+                    rowEl.find(".filelist-size").text(parseInt(totalSize / 1024) + "KB");
+                    rowEl.find(".filelist-actions").html("");
+                    tableEl.append(rowEl);
                     
                     setTimeout(function() {$(window).trigger('resize');}, 500);
 
