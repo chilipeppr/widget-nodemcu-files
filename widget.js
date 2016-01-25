@@ -271,8 +271,19 @@ l = nil`;
                     
                     var totalSize = 0;
                     
+                    // we need to sort the files since they come back in random order from nodemcu
+                    var keys = [];
+                    var byname = {}
                     for (var i in list) {
                         var file = list[i];
+                        keys.push(file.name);
+                        byname[file.name] = file;
+                    }
+                    keys.sort();
+                    
+                    for (var i in keys) {
+                        var key = keys[i];
+                        var file = byname[key];
                         
                         var rowEl = tEl.clone();
                         rowEl.removeClass("hidden");
