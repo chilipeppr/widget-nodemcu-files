@@ -296,8 +296,10 @@ l = nil`;
                         
                         tableEl.append(rowEl);
                     }
+                    
+                    setTimeout(function() {$(window).trigger('resize');}, 500);
+
                 }
-                $(window).trigger('resize');
             }
             
             // This code handles if we get ### START FILE DUMP ###
