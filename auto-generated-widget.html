@@ -380,13 +380,15 @@ l = nil`;
          * Publish a signal to the Lua Editor to open this file in a tab for editing.
          */
         isFileCaptureOn: false,
+        fileEditNameCapturing: null,
         fileEdit: function(evt) {
             
             if (evt && 'currentTarget' in evt) $(evt.currentTarget).popover('hide');
             var filename = evt.data.name;
             
             this.isFileCaptureOn = true;
-
+            this.fileEditNameCapturing = filename;
+            
             var code = `file.open("` + filename + `", "r")
 function dumpFile()
     local fileline = file.readline()
@@ -406,6 +408,13 @@ file.close()`;
          */
         onFileEditCaptureDone: function(content) {
             console.log("onFileEditCaptureDone. content:", content);
+            
+            var obj = {
+                name: this.fileEditNameCapturing,
+                content: content
+            }
+            chilipeppr.publish("/com-chilipeppr-widget-luaeditor/loadScript", obj);
+            this.fileEditNameCapturing = null;
         },
         /**
          * Send Lua command to dump out contents of file.
