@@ -297,6 +297,7 @@ l = nil`;
                         tableEl.append(rowEl);
                     }
                 }
+                $(window).trigger('resize');
             }
             
             // This code handles if we get ### START FILE DUMP ###
