@@ -30,6 +30,8 @@
 }
 #com-chilipeppr-widget-nodemcu-files .panel-body {
     padding:0;
+    max-height:200px;
+    overflow: auto;
 }
 
 #com-chilipeppr-widget-nodemcu-files .btn-group-filecmds {
@@ -41,6 +43,10 @@
 }
 #com-chilipeppr-widget-nodemcu-files .filelist-actions {
     padding-right:0;
+}
+
+#com-chilipeppr-widget-nodemcu-files .filelist-table th, #com-chilipeppr-widget-nodemcu-files .filelist-table td {
+    padding:2px 6px;
 }
     </style>
 
@@ -341,6 +347,13 @@ l = nil`;
 
                         rowEl.find(".btn-filerun").click(file, this.fileRun.bind(this));
                         rowEl.find(".btn-filedelete").click(file, this.fileDelete.bind(this));
+                        
+                        rowEl.find(".btn").popover({
+                            delay: 1000,
+                            animation: true,
+                            trigger: 'hover',
+                            placement: 'auto'
+                        });
                         
                         tableEl.append(rowEl);
                     }

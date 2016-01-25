@@ -294,6 +294,13 @@ l = nil`;
                         rowEl.find(".btn-filerun").click(file, this.fileRun.bind(this));
                         rowEl.find(".btn-filedelete").click(file, this.fileDelete.bind(this));
                         
+                        rowEl.find(".btn").popover({
+                            delay: 1000,
+                            animation: true,
+                            trigger: 'hover',
+                            placement: 'auto'
+                        });
+                        
                         tableEl.append(rowEl);
                     }
                     
