@@ -248,6 +248,10 @@ l = nil`;
                 if (cmd.match(/{"files":null}/)) {
                     // we got back an empty list of files
                     console.log("got back empty file list")
+                    
+                    // remove previous file list rows
+                    tableEl.find(".filelist-dynamic").remove();
+                    
                     $('#' + this.id + ' .filelist-start').addClass("hidden");
                     $('#' + this.id + ' .filelist-empty').removeClass("hidden");
                 } else if (cmd.match(/^{"files"\:\[{/)) {
