@@ -371,6 +371,7 @@ l = nil`;
         fileEdit: function(evt) {
             
             if (evt && 'currentTarget' in evt) $(evt.currentTarget).popover('hide');
+            $('body .popover').remove(); // do heavy version of deleting popovers
             var filename = evt.data.name;
             
             this.isFileCaptureOn = true;
@@ -396,6 +397,9 @@ file.close()`;
         onFileEditCaptureDone: function(content) {
             console.log("onFileEditCaptureDone. content:", content);
             
+            // remove cr/lf if they exist
+            content = content.replace(/\r\n/g, "\n");
+            
             var obj = {
                 name: this.fileEditNameCapturing,
                 content: content
@@ -411,6 +415,7 @@ file.close()`;
             console.log("fileDump. evt:", evt);
             
             if (evt) $(evt.currentTarget).popover('hide');
+            $('body .popover').remove(); // do heavy version of deleting popovers
             
             var filename = null;
             
@@ -449,6 +454,7 @@ file.close()`;
             console.log("fileCompile. evt:", evt);
             
             if (evt) $(evt.currentTarget).popover('hide');
+            $('body .popover').remove(); // do heavy version of deleting popovers
             
             var filename = evt.data.name;
             
@@ -461,6 +467,7 @@ file.close()`;
         fileDelete: function(evt) {
             console.log("fileDel. evt:", evt);
             if (evt) $(evt.currentTarget).popover('hide');
+            $('body .popover').remove(); // do heavy version of deleting popovers
             var filename = evt.data.name;
             this.send('file.remove("' + filename + '")');
             this.getFileList();
@@ -472,6 +479,7 @@ file.close()`;
         fileRun: function(evt) {
             
             if (evt && 'currentTarget' in evt) $(evt.currentTarget).popover('hide');
+            $('body .popover').remove(); // do heavy version of deleting popovers
             var filename = evt.data.name;
             this.send('dofile("' + filename + '")');
 
