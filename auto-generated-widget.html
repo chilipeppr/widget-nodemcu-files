@@ -588,6 +588,10 @@ file.close()`;
                 console.log("doing refresh");
                 // Make sure popover is immediately hidden
                 $('#' + that.id + ' .btn-refresh').popover("hide");
+                
+                // Sometimes we get dangling popovers from this widget, so forcibly remove them all
+                $('body .popover').remove();
+                
                 // Show a flash msg
                 chilipeppr.publish(
                     "/com-chilipeppr-elem-flashmsg/flashmsg",
