@@ -243,6 +243,21 @@ cpdefine("inline:com-chilipeppr-widget-nodemcu-files", ["chilipeppr_ready", /* o
          */
         getFileList: function() {
             var code = `l = file.list()
+if next(l) == nil then
+  uart.write(0, "{\"files\":null}")
+else
+  uart.write(0, "{\"files\":[")
+  local ctr = 0
+  for k,v in pairs(l) do
+    if ctr > 0 then uart.write(0, ", ") end
+    ctr = ctr + 1
+    uart.write(0, "{\"name\":\"" .. k .. "\", \"size\":" .. v .. "}")
+  end
+  uart.write(0, "]}\n")
+end
+`;
+            /*
+            var code = `l = file.list()
 str = ""
 if next(l) == nil then
   str = "{\\"files\\":null}"
@@ -257,6 +272,7 @@ end
 print(str)
 str = nil
 l = nil`;
+            */
             this.send(code);
         },
         /**
