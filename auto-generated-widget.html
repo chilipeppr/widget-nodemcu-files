@@ -244,7 +244,7 @@ cpdefine("inline:com-chilipeppr-widget-nodemcu-files", ["chilipeppr_ready", /* o
         getFileList: function() {
             var code = `l = file.list()
 if next(l) == nil then
-  uart.write(0, "{\\"files\\":null}")
+  print("{\\"files\\":null}")
 else
   uart.write(0, "{\\"files\\":[")
   local ctr = 0
